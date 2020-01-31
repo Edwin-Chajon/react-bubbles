@@ -1,40 +1,41 @@
-import React,{useState} from "react";
+import React, { useState } from 'react';
+import { axiosWithAuth } from './axiosWithAuth';
 
-const axios = require('axios')
-const Login = props => {
-  const getCredintials = async e => {
-    e.preventDefault()
-    const cred = {
-      //username: "Lambda School",
-      //password: "i<3Lambd4"
-      username: "",
-      password: ""
-    };
-    const res = await axios.post('http://localhost:5000/api/login',{...cred})
-    const key = res.data.payload
-    await window.localStorage.setItem("key",key)
-    await props.setStorage(window.localStorage.getItem("key", key));
-    props.history.push('/bubbles')
-  }
-  return (
-    <>
-      <form onSubmit={getCredintials}>
-        <input
-          type="text"
-          placeholder="Enter Username"
-          name="username"
-          required
-        />
-        <input
-          type="password"
-          placeholder="Enter Password"
-          name="password"
-          required
-        />
-        <input type="submit" value='Submit' required />
-      </form>
-    </>
-  );
-};
+const Login = (props) => {
+    const [credentials, setCredentials] = useState({
+        username: '',
+        password: ''
+    });
+    const [isLoading, setIsLoading] = useState(false);
+
+    const handleChange = e => {
+        setCredentials({
+            ...credentials,
+            [e.target.name]: e.target.value
+        })
+    }
+
+    const handleSubmit = e => {
+        e.preventDefault();
+        setIsLoading(true)
+        axiosWithAuth().post('/login', credentials)
+            .then(res => {
+                localStorage.setItem('token', res.data.payload);
+                props.history.push("/bubbles");
+            })
+            .catch(err => console.log(err.response))
+    }
+
+
+    
+    return(
+        <form onSubmit={handleSubmit}>
+            {isLoading && <div>one sec...</div>}
+            <input type="text" name="username" value={credentials.username} onChange={handleChange} />
+            <input type="password" name="password" value={credentials.password} onChange={handleChange} />
+            <button type="submit">Log in</button>
+        </form>
+    )
+}
 
 export default Login;

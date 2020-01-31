@@ -1,16 +1,17 @@
 import React, { useState } from "react";
-import axios from "axios";
+const axios = require("axios");
 
 const initialColor = {
   color: "",
   code: { hex: "" }
 };
-
-const ColorList = ({ colors, updateColors }) => {
-  console.log(colors);
+const ColorList = ({ colors, updateColors,storage }) => {
   const [editing, setEditing] = useState(false);
   const [colorToEdit, setColorToEdit] = useState(initialColor);
-
+  const key = storage;
+const header = {
+  headers: { authorization: key }
+};
   const editColor = color => {
     setEditing(true);
     setColorToEdit(color);
@@ -28,7 +29,6 @@ const ColorList = ({ colors, updateColors }) => {
     updateColors()
   };
 
-
   return (
     <div className="colors-wrap">
       <p>colors</p>
@@ -36,12 +36,14 @@ const ColorList = ({ colors, updateColors }) => {
         {colors.map(color => (
           <li key={color.color} onClick={() => editColor(color)}>
             <span>
-              <span className="delete" onClick={e => {
-                    e.stopPropagation();
-                    deleteColor(color)
-                  }
-                }>
-                  x
+              <span
+                className="delete"
+                onClick={e => {
+                  e.stopPropagation();
+                  deleteColor(color);
+                }}
+              >
+                x
               </span>{" "}
               {color.color}
             </span>
@@ -82,8 +84,7 @@ const ColorList = ({ colors, updateColors }) => {
           </div>
         </form>
       )}
-      <div className="spacer" />
-      {/* stretch - build another form here to add a color */}
+      <div />
     </div>
   );
 };
