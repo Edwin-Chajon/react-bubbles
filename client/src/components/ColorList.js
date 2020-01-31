@@ -16,16 +16,18 @@ const ColorList = ({ colors, updateColors }) => {
     setColorToEdit(color);
   };
 
-  const saveEdit = e => {
+  const saveEdit = async e => {
     e.preventDefault();
-    // Make a put request to save your updated color
-    // think about where will you get the id from...
-    // where is is saved right now?
+    await axios.put(`http://localhost:5000/api/colors/${colorToEdit.id}`,colorToEdit,header);
+    updateColors()
+    setEditing(false)
   };
 
-  const deleteColor = color => {
-    // make a delete request to delete this color
+  const deleteColor = async color => {
+    await axios.delete(`http://localhost:5000/api/colors/${color.id}`,header)
+    updateColors()
   };
+
 
   return (
     <div className="colors-wrap">
